@@ -358,6 +358,10 @@ final class Config
                     throw new RuntimeException(\sprintf('Target path %s does not exist', $arg));
                 }
 
+                if (is_dir($realpath) === false) {
+                    throw new RuntimeException(\sprintf('Target path %s is not a directory', $arg));
+                }
+
                 $this->targetDirs[] = $realpath;
             }
         }

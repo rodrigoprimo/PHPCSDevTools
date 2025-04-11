@@ -91,15 +91,39 @@ final class ProcessCliCommandTest extends XTestCase
     /**
      * Verify that an exception is thrown when an invalid target path is passed.
      *
+     * @dataProvider dataProcessInvalidTargetThrowException
+     *
+     * @param string $targetDir       The invalid target directory to test.
+     * @param string $expectedMessage The expected exception message.
+     *
      * @return void
      */
-    public function testProcessInvalidTargetThrowException()
+    public function testProcessInvalidTargetThrowException($targetDir, $expectedMessage)
     {
         $this->expectException('RuntimeException');
-        $this->expectExceptionMessage('Target path ./doesnotexist does not exist');
+        $this->expectExceptionMessage($expectedMessage);
 
-        $_SERVER['argv'] = ['check-complete', './doesnotexist'];
+        $_SERVER['argv'] = ['check-complete', $targetDir];
         $config          = new Config(new TestWriter());
+    }
+
+    /**
+     * Data provider.
+     *
+     * @return array<string, array<string, string>>
+     */
+    public static function dataProcessInvalidTargetThrowException()
+    {
+        return [
+            'Directory does not exist' => [
+                'targetDir' => './doesnotexist',
+                'expectedMessage' => 'Target path ./doesnotexist does not exist',
+            ],
+            'Path is not a directory' => [
+                'targetDir' => __FILE__,
+                'expectedMessage' => \sprintf('Target path %s is not a directory', __FILE__),
+            ],
+        ];
     }
 
     /**
